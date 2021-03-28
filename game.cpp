@@ -1,9 +1,9 @@
 #include <iostream>
 #include <cmath>
 #include <fstream>
-#include<map>
+#include <map>
 #include <vector>
-#include<unistd.h>
+#include <unistd.h>
 
 #include <GL/glew.h>
 #include <GL/gl.h>
@@ -94,6 +94,8 @@ double last_update_time, current_time;
 glm::vec3 rect_pos, floor_pos;
 float rectangle_rotation = 0;
 
+/* Special thanks for that guiline to help us solve a huge problem
+    https://badvertex.com/2012/11/20/how-to-load-a-glsl-shader-in-opengl-using-c.html */
 
 GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path) {
 
@@ -125,7 +127,6 @@ GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path
     int InfoLogLength;
 
     // Compile Vertex Shader
-       printf("Compiling shader : %s\n", vertex_file_path);
     char const * VertexSourcePointer = VertexShaderCode.c_str();
     glShaderSource(VertexShaderID, 1, &VertexSourcePointer , NULL);
     glCompileShader(VertexShaderID);
@@ -221,19 +222,6 @@ struct VAO* create3DObject (GLenum primitive_mode, int numVertices, const GLfloa
     return vao;
 }
 
-/* Generate VAO, VBOs and return VAO handle - Common Color for all vertices */
-struct VAO* create3DObject (GLenum primitive_mode, int numVertices, const GLfloat* vertex_buffer_data, const GLfloat red, const GLfloat green, const GLfloat blue, GLenum fill_mode=GL_FILL)
-{
-    GLfloat* color_buffer_data = new GLfloat [3*numVertices];
-    for (int i=0; i<numVertices; i++) {
-        color_buffer_data [3*i] = red;
-        color_buffer_data [3*i + 1] = green;
-        color_buffer_data [3*i + 2] = blue;
-    }
-
-    return create3DObject(primitive_mode, numVertices, vertex_buffer_data, color_buffer_data, fill_mode);
-}
-
 /* Render the VBOs handled by VAO */
 void draw3DObject (struct VAO* vao)
 {
@@ -273,7 +261,6 @@ typedef struct Sprite
     int status;
     int angle;
 }Sprite;
-
 
 map <string,Sprite> normals;
 map <string, Sprite> cube;
@@ -344,37 +331,37 @@ VAO *scorerectangle, *line, *rectangle, *rectangle2, *rectangle3, *floor_vao;
 void createRectangle (string name) 
 {
     static const GLfloat vertex_buffer_data [] = {
-	-0.5, 1.0, 0.5,//Yellow 
+	-0.5, 1.0, 0.5,
 	0.5, 1.0, 0.5, 
 	0.5, -1.0, 0.5,
 	-0.5, 1.0, 0.5, 
 	-0.5, -1.0, 0.5,
 	0.5, -1.0, 0.5,
-	0.5, 1.0, 0.5,//Pink
+	0.5, 1.0, 0.5,
 	0.5, 1.0, -0.5,
 	0.5, -1.0, -0.5,
 	0.5, 1.0, 0.5,
 	0.5, -1.0, 0.5,
 	0.5, -1.0, -0.5,
-	-0.5, 1.0, -0.5,//Light Blue
+	-0.5, 1.0, -0.5,
 	0.5, 1.0, -0.5,
 	0.5, -1.0, -0.5,
 	-0.5, 1.0, -0.5,
 	-0.5, -1.0, -0.5,
 	0.5, -1.0, -0.5,
-	-0.5, 1.0, 0.5,//Red
+	-0.5, 1.0, 0.5,
 	-0.5, 1.0, -0.5,
 	-0.5, -1.0, -0.5, 
 	-0.5, 1.0, 0.5,
 	-0.5, -1.0, 0.5, 
 	-0.5, -1.0, -0.5, 
-	-0.5, 1.0, 0.5,//Green
+	-0.5, 1.0, 0.5,
 	-0.5, 1.0, -0.5, 
 	0.5, 1.0, -0.5,
 	-0.5, 1.0, 0.5,
 	0.5, 1.0, 0.5,
 	0.5, 1.0, -0.5,
-	-0.5, -1.0, 0.5,//Blue 
+	-0.5, -1.0, 0.5,
 	0.5, -1.0, 0.5,
 	0.5, -1.0, -0.5,
 	-0.5, -1.0, 0.5, 
@@ -383,13 +370,13 @@ void createRectangle (string name)
     };
 
     GLfloat color_buffer_data [] = {
+	1.0f, 1.0f, 0.0f,//yellow
 	1.0f, 1.0f, 0.0f,
 	1.0f, 1.0f, 0.0f,
 	1.0f, 1.0f, 0.0f,
 	1.0f, 1.0f, 0.0f,
 	1.0f, 1.0f, 0.0f,
-	1.0f, 1.0f, 0.0f,
-	1.0f, 0.0f, 1.0f,
+	1.0f, 0.0f, 1.0f,//pink
 	1.0f, 0.0f, 1.0f,
 	1.0f, 0.0f, 1.0f,
 	1.0f, 0.0f, 1.0f,
@@ -445,37 +432,37 @@ void createRectangle (string name)
 void createRectangle2 (string name) 
 {
     static const GLfloat vertex_buffer_data [] = {
-	-0.5, -1, 1.5,//Yellow 
+	-0.5, -1, 1.5,
 	0.5, -1, 1.5, 
 	0.5, -1, -0.5,
 	-0.5, -1, 1.5, 
 	-0.5, -1, -0.5,
 	0.5, -1, -0.5,
-	0.5, 0, 1.5,//Pink
+	0.5, 0, 1.5,
 	0.5, 0, -0.5,
 	0.5, -1, -0.5,
 	0.5, 0, 1.5,
 	0.5, -1, 1.5,
 	0.5, -1, -0.5,
-	-0.5, 0, 1.5,//Light Blue
+	-0.5, 0, 1.5,
 	0.5, 0, 1.5,
     0.5, 0, -0.5,
 	-0.5, 0, 1.5,
 	-0.5, 0, -0.5,
 	0.5, 0, -0.5,
-	-0.5, 0, 1.5,//Red
+	-0.5, 0, 1.5,
 	-0.5, 0, -0.5,
 	-0.5, -1, -0.5, 
 	-0.5, 0, 1.5,
 	-0.5, -1, 1.5, 
 	-0.5, -1, -0.5, 
-	-0.5, 0, 1.5,//Green
+	-0.5, 0, 1.5,
 	0.5, 0, 1.5, 
 	0.5, -1, 1.5,
 	-0.5, 0, 1.5,
 	-0.5, -1, 1.5,
 	0.5, -1, 1.5,
-	-0.5, 0, -0.5,//Blue 
+	-0.5, 0, -0.5,
 	0.5, 0, -0.5,
 	0.5, -1, -0.5,
 	-0.5, 0, -0.5, 
@@ -539,37 +526,37 @@ void createRectangle2 (string name)
 void createRectangle3 (string name) 
 {
     static const GLfloat vertex_buffer_data [] = {
-	1.5,0, 0.5,//Yellow 
+	1.5,0, 0.5,
 	1.5, -1, 0.5, 
 	-0.5, -1, 0.5,
 	1.5, 0, 0.5, 
 	-0.5, 0, 0.5,
 	-0.5, -1, 0.5,
-	1.5, -1, 0.5,//Pink
+	1.5, -1, 0.5,
 	1.5, -1, -0.5,
 	-0.5, -1, -0.5,
 	1.5, -1, 0.5,
 	-0.5, -1, 0.5,
 	-0.5, -1, -0.5,
-	-0.5, 0, -0.5,//Light Blue
+	-0.5, 0, -0.5,
 	1.5, 0, -0.5,
         1.5, -1, -0.5,
 	-0.5, 0, -0.5,
 	-0.5, -1, -0.5,
 	1.5, -1, -0.5,
-	1.5, 0, 0.5,//Red
+	1.5, 0, 0.5,
 	1.5, 0, -0.5,
 	-0.5, 0, -0.5, 
 	1.5, 0, 0.5,
 	-0.5, 0, 0.5, 
 	-0.5, 0, -0.5, 
-	1.5, 0, 0.5,//Green
+	1.5, 0, 0.5,
 	1.5, 0, -0.5, 
 	1.5, -1,-0.5,
 	1.5, 0, 0.5,
 	1.5, -1, 0.5,
 	1.5, -1, -0.5,
-	-0.5, 0, 0.5,//Blue 
+	-0.5, 0, 0.5,
 	-0.5, 0, -0.5,
 	-0.5, -1, -0.5,
 	-0.5, 0, 0.5, 
